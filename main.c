@@ -4,10 +4,11 @@
 #include <windows.h>
 #include <io.h>
 
-#define MAX1 100
-#define MAX2 100
+#define MAX 100
 
 int main();
+void menu_user();
+void menu_admin();
 
 COORD coord = {0,0};
 void gotoxy(int x, int y) {
@@ -21,19 +22,25 @@ void clrscr() {
 }
 
 typedef struct {
-    char id[MAX2];
-    char nama[MAX2];
+    char id[MAX];
+    char nama[MAX];
     long int harga;
 } Data_Makanan;
 
 typedef struct {
-    char id[MAX2];
-    char nama[MAX2];
+    char id[MAX];
+    char nama[MAX];
     long int harga;
 } Data_Minuman;
 
+typedef struct {
+    char nama[MAX];
+    long long int jumlah_belanja;
+} Data_Pelanggan;
+
 Data_Makanan data_makanan;
 Data_Minuman data_minuman;
+Data_Pelanggan data_pelanggan;
 
 FILE *f_makanan, *f_minuman;
 
@@ -328,6 +335,116 @@ void menu_user() {
 "5. Edit Data\n"
  */
 
+/*
+ * Menu admin => Data Pelanggan
+ *
+ */
+FILE *f_pelanggan;
+void buka_pelanggan() {
+    if((f_pelanggan = fopen("File_Data_Pelanggan.txt","a+")) == NULL){
+        clrscr();
+        printf("Data Pelanggan Tidak Bisa Dibuka Euy...\n");
+        exit(1);
+    }
+}
+
+//1. Tampil Data Pelanggan
+void MAP_tampil_pelanggan() {
+    int i = 0, file_handle, ukuran_file;
+
+    printf("===============================\n"
+           "MENU TAMPIL DATA PELANGGAN\n"
+           "===============================\n\n"
+           );
+    buka_pelanggan();
+    file_handle = fileno(f_pelanggan);
+    if((ukuran_file = filelength(file_handle)) == -1L){
+        printf("Tidak dapat memperoleh ukuran file :(\n");
+        Sleep(1000);
+        fclose(f_pelanggan);
+        exit(1);
+    } else {
+        if(ukuran_file == 0)
+            printf("Data Pelanggan Kosong!\n");
+        else {
+            printf("||==============||======================||==============================||\n");
+            printf("||\tNo\t||\tNama Pelanggan\t||\tTotal Belanja\t\t||\n");
+            printf("||==============||======================||==============================||\n");
+
+            while (fread(&data_pelanggan, sizeof(data_pelanggan), 1, f_pelanggan))
+                printf("||\t%i.\t||\t%s\t\t||\t%lli\t\t||\n", ++i, data_pelanggan.nama, data_pelanggan.jumlah_belanja);
+            printf("==========================================================================================\n");
+        }
+    }
+    fclose(f_pelanggan);
+    _getch();
+
+}
+
+//2. Ubah Data Pelanggan
+void MAP_ubah_pelanggan() {
+
+}
+
+//3. Hapus Data Pelanggan
+void MAP_hapus_pelanggan() {
+
+}
+
+/*
+ * Menu admin
+ * 1. Data Pelanggan
+ */
+void MA_pelanggan() {
+
+    char pilihan;
+
+    do {
+        fflush(stdin);
+        clrscr();
+        printf("=============================\n"
+               "MENU DATA PELANGGAN\n"
+               "=============================\n"
+               "1. Tampil Data Pelanggan\n"
+               "2. Ubah Data Pelanggan\n"
+               "3. Hapus Data Pelanggan\n"
+               "4. Kembali Ke MENU ADMIN\n"
+               "5. Kembali Ke MENU UTAMA\n"
+               "6. Keluar\n"
+               "=============================\n"
+               "Pilihan: "
+        );
+        pilihan = (char) getchar();
+
+        switch(pilihan) {
+            case '1':
+                MAP_tampil_pelanggan();
+                break;
+
+            case '2':
+                MAP_ubah_pelanggan();
+                break;
+
+            case '3':
+                MAP_hapus_pelanggan();
+                break;
+
+            case '4':
+                break;
+
+            case '5':
+                break;
+
+            case '6':
+                exit(0);
+            default:
+                printf("Pilih hanya dari 1-6\n");
+
+        }
+
+    } while (pilihan < 1 || pilihan > 6);
+}
+
 void menu_admin() {
     char pilihan;
     do
@@ -350,6 +467,7 @@ void menu_admin() {
 
         switch(pilihan) {
             case '1':
+                MA_pelanggan();
                 break;
 
             case '2':
