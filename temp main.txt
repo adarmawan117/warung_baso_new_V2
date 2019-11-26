@@ -1,0 +1,240 @@
+#include <stdio.h>
+#include <string.h>
+#include <conio.h>
+#include <windows.h>
+#define MAX1 100
+#define MAX2 100
+
+COORD coord = {0,0};
+void gotoxy(int x, int y) {
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+void clrscr() {
+    system("cls");
+}
+
+typedef struct {
+    char id[MAX2];
+    char nama[MAX2];
+    int harga;
+} Data_Makanan;
+
+typedef struct {
+    char id[MAX2];
+    char nama[MAX2];
+    int harga;
+} Data_Minuman;
+
+Data_Makanan data_makanan[MAX1];
+Data_Minuman data_minuman[MAX1];
+
+FILE *f_makanan, *f_minuman;
+
+void buka_makanan() {
+    if((f_makanan = fopen("File_Makanan.dat","a+b")) == NULL){
+        clrscr();
+        printf("Data Makanan Tidak Bisa Dibuka Euy...\n");
+        exit(1);
+    }
+}
+
+void baca_makanan() {
+    if((f_makanan = fopen("File_Makanan.dat","r+b")) == NULL){
+        clrscr();
+        printf("Data Makanan Tidak Ada Euy....\n");
+        exit(1);
+    }
+}
+
+void buka_minuman() {
+    if((f_minuman = fopen("File_Minuman.dat","a+b")) == NULL){
+        clrscr();
+        printf("Data Makanan Tidak Bisa Dibuka Euy...\n");
+        exit(1);
+    }
+}
+
+void baca_minuman() {
+    if((f_minuman = fopen("File_Minuman.dat","r+b")) == NULL){
+        clrscr();
+        printf("Data Makanan Tidak Ada Euy....\n");
+        exit(1);
+    }
+}
+
+void input_makanan_manual(){
+    buka_makanan();
+    strcpy(data_makanan[0].id,   "MN-0001");
+    strcpy(data_makanan[0].nama, "Es Campur");
+    data_makanan[0].harga        = 7000;
+    fwrite(&data_makanan, sizeof(data_makanan), 1, f_makanan);
+
+    strcpy(data_makanan[1].id,    "MN-0002");
+    strcpy(data_makanan[1].nama,  "Es Teh Manis");
+    data_makanan[1].harga         = 3500;
+    fwrite(&data_makanan, sizeof(data_makanan), 1, f_makanan);
+
+    strcpy(data_makanan[2].id,    "MN-0003");
+    strcpy(data_makanan[2].nama,  "Es Jeruk");
+    data_makanan[2].harga         = 4000;
+    fwrite(&data_makanan, sizeof(data_makanan), 1, f_makanan);
+
+    strcpy(data_makanan[3].id,    "MN-0004");
+    strcpy(data_makanan[3].nama,  "Es Teh botol");
+    data_makanan[3].harga         = 4000;
+    fwrite(&data_makanan, sizeof(data_makanan), 1, f_makanan);
+
+    strcpy(data_makanan[4].id,    "MN-0005");
+    strcpy(data_makanan[4].nama,  "Es Teh Gelas");
+    data_makanan[4].harga         = 1500;
+    fwrite(&data_makanan, sizeof(data_makanan), 1, f_makanan);
+
+    strcpy(data_makanan[5].id,    "MN-0006");
+    strcpy(data_makanan[5].nama,  "Es Fruit Tea");
+    data_makanan[5].harga         = 4000;
+    fwrite(&data_makanan, sizeof(data_makanan), 1, f_makanan);
+
+    fclose(f_makanan);
+}
+
+void input_minuman_manual() {
+
+    buka_minuman();
+
+    strcpy(data_minuman[0].id,    "MN-0001");
+    strcpy(data_minuman[0].nama,  "Es Campur");
+    data_minuman[0].harga         = 7000;
+    fwrite(&data_minuman, sizeof(data_minuman), 1, f_minuman);
+
+    strcpy(data_minuman[1].id,    "MN-0002");
+    strcpy(data_minuman[1].nama,  "Es Teh Manis");
+    data_minuman[1].harga         = 3500;
+    fwrite(&data_minuman, sizeof(data_minuman), 1, f_minuman);
+
+    strcpy(data_minuman[2].id,    "MN-0003");
+    strcpy(data_minuman[2].nama,  "Es Jeruk");
+    data_minuman[2].harga         = 4000;
+    fwrite(&data_minuman, sizeof(data_minuman), 1, f_minuman);
+
+    strcpy(data_minuman[3].id,    "MN-0004");
+    strcpy(data_minuman[3].nama,  "Es Teh Botol");
+    data_minuman[3].harga         = 4000;
+    fwrite(&data_minuman, sizeof(data_minuman), 1, f_minuman);
+
+    strcpy(data_minuman[4].id,    "MN-0005");
+    strcpy(data_minuman[4].nama,  "Es Teh Gelas");
+    data_minuman[4].harga         = 1500;
+    fwrite(&data_minuman, sizeof(data_minuman), 1, f_minuman);
+
+    strcpy(data_minuman[5].id,    "MN-0006");
+    strcpy(data_minuman[5].nama,  "Es Fruit Tea");
+    data_minuman[5].harga         = 4000;
+    fwrite(&data_minuman, sizeof(data_minuman), 1, f_minuman);
+
+    fclose(f_makanan);
+}
+
+void tampil_makanan() {
+    int i = 0;
+
+    if(strcmp(data_makanan[0].id, "") == 0)
+        input_makanan_manual();
+
+    printf("===================================\n"
+           "DATA MAKANAN\n"
+           "===================================\n");
+    while(strcmp(data_makanan[i].id, "") != 0){
+        printf("Data Makanan %d:\n", i+1);
+        printf("ID\t: %s\n",        data_makanan[i].id);
+        printf("Nama\t: %s\n",      data_makanan[i].nama);
+        printf("Harga\t: %d\n\n\n", data_makanan[i].harga);
+
+        i++;
+    }
+}
+
+void tampil_minuman() {
+    int i = 0;
+
+    if(strcmp(data_minuman[0].id, "") == 0)
+        input_minuman_manual();
+
+    printf("===================================\n"
+           "DATA MINUMAN\n"
+           "===================================\n");
+    while(strcmp(data_minuman[i].id, "") != 0){
+        printf("Data Minuman %d:\n", i+1);
+        printf("ID\t: %s\n",        data_minuman[i].id);
+        printf("Nama\t: %s\n",      data_minuman[i].nama);
+        printf("Harga\t: %d\n\n\n", data_minuman[i].harga);
+
+        i++;
+    }
+}
+
+// menu 1
+void menu_warung() {
+    tampil_makanan();
+    tampil_minuman();
+}
+
+int main() {
+
+    char pilih_menu;
+
+    do
+        {
+        fflush(stdin);
+        clrscr();
+        printf("1. Menu Warung\n"
+               "2. Data Pemesanan\n"
+               "3. Tampil Data Pelanggan\n"
+               "4. Cari Data\n"
+               "5. Edit Data\n"
+               "6. Tentang Toko\n"
+               "7. Keluar\n"
+               "Pilihan Anda : "
+        );
+        pilih_menu = (char) getchar();
+
+        switch (pilih_menu)
+        {
+            case '1':
+                menu_warung();
+                break;
+
+            case '2':
+
+                break;
+
+            case '3':
+
+                break;
+
+            case '4':
+
+                break;
+
+            case '5':
+
+                break;
+
+            case '6':
+
+                break;
+
+            default: {
+                printf("Pilih hanya dari 1-7\n");
+            }
+        }
+
+        printf("Tekan sembarang untuk kembali ke menu utama");
+        getch();
+
+    } while(pilih_menu != '7');
+
+    return 0;
+}

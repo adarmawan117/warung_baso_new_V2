@@ -1,0 +1,3 @@
+D:/Programming/projectC/update/warung_baso_new_V2/cmake-build-debug/CMakeFiles/warung_baso_new_V2.dir
+D:/Programming/projectC/update/warung_baso_new_V2/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/Programming/projectC/update/warung_baso_new_V2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
