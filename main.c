@@ -7,6 +7,8 @@
 #define MAX1 100
 #define MAX2 100
 
+int main();
+
 COORD coord = {0,0};
 void gotoxy(int x, int y) {
     coord.X = x;
@@ -237,7 +239,7 @@ void tampil_menu() {
         clrscr();
         fflush(stdin);
         printf("=========================\n"
-               "MENU TAMPIL MENU WARUNG\n"
+               "TAMPIL MENU WARUNG\n"
                "=========================\n"
                "1. Menu Makanan\n"
                "2. Menu Minuman\n"
@@ -265,26 +267,23 @@ void tampil_menu() {
     } while ((pilih_menu < '1') || (pilih_menu > '3'));
 }
 
-/*
- *
-               "2. Data Pemesanan\n"
-               "3. Tampil Data Pelanggan\n"
-               "4. Cari Data\n"
-               "5. Edit Data\n"
- */
-
-int main() {
+void menu_user() {
 
     char pilih_menu;
 
     do
-        {
+    {
         fflush(stdin);
         clrscr();
-        printf("1. Tampilkan Menu\n"
+        printf("===================\n"
+               "MENU USER\n"
+               "===================\n"
+               "1. Tampilkan Menu Warung\n"
                "2. Pesan\n"
                "3. Tentang Toko\n"
-               "4. Keluar\n"
+               "4. Kembali Ke Menu Utama\n"
+               "5. Keluar\n"
+               "===================\n"
                "Pilihan Anda : "
         );
         pilih_menu = (char) getchar();
@@ -304,6 +303,9 @@ int main() {
                 break;
 
             case '4':
+                goto ke_menu_utama;
+
+            case '5':
                 exit(0);
 
             default: {
@@ -311,10 +313,106 @@ int main() {
             }
         }
 
-        printf("Tekan sembarang untuk kembali ke menu utama");
+        printf("Tekan sembarang untuk kembali ke MENU USER");
         getch();
 
     } while(pilih_menu != '4');
+    ke_menu_utama:
+    printf("");
+}
 
+/*
+"2. Data Pemesanan\n"
+"3. Tampil Data Pelanggan\n"
+"4. Cari Data\n"
+"5. Edit Data\n"
+ */
+
+void menu_admin() {
+    char pilihan;
+    do
+    {
+        fflush(stdin);
+        clrscr();
+        printf("===========================\n"
+               "MENU ADMIN\n"
+               "===========================\n"
+               "1. Data Pelanggan\n"
+               "2. Data Makanan\n"
+               "3. Data Minuman\n"
+               "4. Data Order\n"
+               "5. Kembali Ke Menu Utama\n"
+               "6. Keluar\n"
+               "===========================\n"
+               "Pilihan: "
+               );
+        pilihan = (char) getchar();
+
+        switch(pilihan) {
+            case '1':
+                break;
+
+            case '2':
+                break;
+
+            case '3':
+                break;
+
+            case '4':
+                break;
+
+            case '5':
+                goto ke_menu_utama;
+
+            case'6':
+                exit(0);
+
+            default:
+                printf("Pilih hanya dari 1-6\n");
+        }
+        printf("Tekan sembarang untuk kembali ke MENU ADMIN");
+        getch();
+
+    } while((pilihan < 1) || (pilihan > 6));
+
+    ke_menu_utama:
+    printf("");
+}
+
+int main() {
+
+    char pilihan;
+
+    do
+    {
+        fflush(stdin);
+        clrscr();
+        printf("============\n"
+               "MENU UTAMA\n"
+               "============\n"
+               "1. Menu User\n"
+               "2. Menu Admin\n"
+               "3. Keluar\n"
+               "=============\n"
+               "Pilihan: "
+        );
+        pilihan = (char) getchar();
+        switch (pilihan) {
+            case '1':
+                menu_user();
+                break;
+
+            case '2':
+                menu_admin();
+                break;
+
+            case '3':
+                exit(0);
+
+            default:
+                printf("Pilih hanya dari 1-3\n");
+
+        }
+    } while((pilihan < 1) || (pilihan > 3));
     return 0;
 }
