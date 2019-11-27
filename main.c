@@ -24,13 +24,13 @@ void clrscr() {
 typedef struct {
     char id[MAX];
     char nama[MAX];
-    long int harga;
+    long long int harga;
 } Data_Makanan;
 
 typedef struct {
     char id[MAX];
     char nama[MAX];
-    long int harga;
+    long long int harga;
 } Data_Minuman;
 
 typedef struct {
@@ -168,7 +168,7 @@ void tampil_makanan() {
         printf("||==============||======================||==============================||==============||\n");
 
         while(fread(&data_makanan, sizeof(data_makanan), 1, f_makanan))
-            printf("||\t%i.\t||\t%s\t\t||\t%s\t\t||\t%li\t||\n",++i, data_makanan.id, data_makanan.nama, data_makanan.harga);
+            printf("||\t%i.\t||\t%s\t\t||\t%s\t\t||\t%lli\t||\n",++i, data_makanan.id, data_makanan.nama, data_makanan.harga);
         printf("==========================================================================================\n");
     }
     fclose(f_makanan);
@@ -212,7 +212,7 @@ void tampil_minuman() {
         printf("||==============||======================||==============================||==============||\n");
 
         while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman))
-            printf("||\t%i.\t||\t%s\t\t||\t%s\t\t||\t%li\t||\n",++i, data_minuman.id, data_minuman.nama, data_minuman.harga);
+            printf("||\t%i.\t||\t%s\t\t||\t%s\t\t||\t%lli\t||\n",++i, data_minuman.id, data_minuman.nama, data_minuman.harga);
         printf("==========================================================================================\n");
     }
     fclose(f_minuman);
@@ -337,7 +337,6 @@ void menu_user() {
 
 /*
  * Menu admin => Data Pelanggan
- *
  */
 FILE *f_pelanggan, *f_temp;
 void buka_pelanggan() {
@@ -488,7 +487,7 @@ void MAP_hapus_pelanggan() {
 
             while(fread(&data_pelanggan, sizeof(data_pelanggan), 1, f_pelanggan)) {
                 if (strcmp(hapus_nama, data_pelanggan.nama) == 0) {
-                    char rubah;
+                    char hapus;
                     printf("Nama %s ditemukan\n", hapus_nama);
                     printf("\n\n"
                            "===================================\n"
@@ -498,10 +497,10 @@ void MAP_hapus_pelanggan() {
                            "Jumlah Belanja\t: %lli\n", data_pelanggan.nama, data_pelanggan.jumlah_belanja);
                     printf("===================================\n\n");
                     printf("Yakin Ingin Menghapus? [Y/T] ");
-                    rubah = (char) getchar();
+                    hapus = (char) getchar();
 
                     // jika Y, maka hapus, jika selain Y maka jangan hapus
-                    if (rubah != 'Y')
+                    if (hapus != 'Y')
                         fwrite(&data_pelanggan, sizeof(data_pelanggan), 1, f_temp);
                 }
 
@@ -574,12 +573,291 @@ void MA_pelanggan() {
 /* ======================================= AKHIR FUNCTION MENU ADMIN DATA PELANGGAN =============================================================*/
 
 /*
+ * MENU ADMIN MAKANAN
+ * Ubah Data Makanan
+ */
+void MAMAK_ubah_makanan() {
+
+    int ketemu = 0;
+    char cari_id[MAX] = "";
+
+    tampil_makanan();
+
+    buka_makanan();
+    buka_temp();
+
+    printf("\n\n"
+           "Masukkan id makanan yang ingin dirubah: ");
+    scanf("%[^\n]%*c", &cari_id);
+
+    printf("\n\n"
+           "=================================\n"
+           "MENAMPILKAN HASIL PENCARIAN\n"
+           "=================================\n"
+    );
+    while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman)) {
+        if (strcmp(cari_id, data_minuman.id) == 0) {
+
+            ++ketemu;
+
+            printf("%i. "
+                   "\tKode Makanan\t: %s\n"
+                   "\tNama Makanan\t: %s\n"
+                   "\tHarga\t: %lli\n",
+
+                   ketemu,
+                   data_makanan.id,
+                   data_makanan.nama,
+                   data_makanan.harga
+            );
+
+            char rubah;
+            printf("===================================\n\n");
+            printf("Ingin merubah? [Y/T] ");
+            rubah = (char) getchar();
+
+            if (rubah == 'Y') {
+
+                printf("\n"
+                       "==========================\n"
+                       "UPDATE DATA\n"
+                       "==========================\n"
+                       "ID : "
+                );
+                fflush(stdin);
+                gets(data_makanan.id);
+                printf("Nama Makanan: ");
+                fflush(stdin);
+                gets(data_makanan.nama);
+                printf("Harga: ");
+                scanf("%lli", &data_makanan.harga);
+
+            }
+        }
+        fwrite(&data_makanan, sizeof(data_makanan), 1, f_temp);
+    }
+
+    fclose(f_pelanggan);
+    fclose(f_temp);
+    remove("File_Data_Pelanggan.txt");
+    rename("temp.txt", "File_Data_Pelanggan.txt");
+}
+
+// Hapus Data Makanan
+void MAMAK_hapus_makanan() {
+
+    int ketemu = 0;
+    char cari_id[MAX] = "";
+
+    tampil_makanan();
+
+    buka_makanan();
+    buka_temp();
+
+    printf("\n\n"
+           "Masukkan id makanan yang ingin dihapus: ");
+    scanf("%[^\n]%*c", &cari_id);
+
+    printf("\n\n"
+           "=================================\n"
+           "MENAMPILKAN HASIL PENCARIAN\n"
+           "=================================\n"
+    );
+    while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman)) {
+        if (strcmp(cari_id, data_minuman.id) == 0) {
+
+            ++ketemu;
+
+            printf("%i. "
+                   "\tKode Makanan\t: %s\n"
+                   "\tNama Makanan\t: %s\n"
+                   "\tHarga\t: %lli\n",
+
+                   ketemu,
+                   data_makanan.id,
+                   data_makanan.nama,
+                   data_makanan.harga
+            );
+
+            char hapus;
+            printf("===================================\n\n");
+            printf("Yakin ingin menghapus? [Y/T] ");
+            hapus = (char) getchar();
+
+            if (hapus != 'Y')
+                fwrite(&data_makanan, sizeof(data_makanan), 1, f_temp);
+        }
+    }
+
+    fclose(f_pelanggan);
+    fclose(f_temp);
+    remove("File_Data_Pelanggan.txt");
+    rename("temp.txt", "File_Data_Pelanggan.txt");
+}
+
+/*
  * Menu admin
  * 2. Data Makanan
  */
 void MA_makanan() {
 
+    char pilihan;
+
+    do {
+        fflush(stdin);
+        clrscr();
+        printf("=============================\n"
+               "MENU DATA MAKANAN\n"
+               "=============================\n"
+               "1. Tampil Data Makanan\n"
+               "2. Ubah Data Makanan\n"
+               "3. Hapus Data Makanan\n"
+               "4. Kembali Ke MENU ADMIN\n"
+               "5. Kembali Ke MENU UTAMA\n"
+               "6. Keluar\n"
+               "=============================\n"
+               "Pilihan: "
+        );
+        pilihan = (char) getchar();
+
+        switch(pilihan) {
+            // 1.  tampil data makanan
+            case '1': {
+                printf("===========================\n"
+                       "MENU TAMPIL MAKANAN\n"
+                       "===========================\n\n"
+                );
+                tampil_makanan();
+                _getch();
+            }
+                break;
+
+            // 2. ubah data makanan
+            case '2': {
+                printf("===========================\n"
+                       "MENU UBAH MAKANAN\n"
+                       "===========================\n\n"
+                );
+
+                tampil_makanan();
+                MAMAK_ubah_makanan();
+                _getch();
+            }
+                break;
+
+            case '3':
+                printf("===========================\n"
+                       "MENU HAPUS MAKANAN\n"
+                       "===========================\n\n"
+                );
+
+                tampil_makanan();
+                MAMAK_hapus_makanan();
+                _getch();
+                break;
+
+            case '4':
+                menu_admin();
+                break;
+
+            case '5':
+                main();
+                break;
+
+            case '6':
+                exit(0);
+            default:
+                printf("Pilih hanya dari 1-6\n");
+
+        }
+
+    } while (pilihan < 1 || pilihan > 6);
 }
+
+/* ======================================= AKHIR FUNCTION MENU ADMIN DATA MAKANAN =============================================================*/
+
+
+/*
+ * Menu admin
+ * 3. Data Minuman
+ */
+void MA_minuman() {
+
+    char pilihan;
+
+    do {
+        fflush(stdin);
+        clrscr();
+        printf("=============================\n"
+               "MENU DATA MAKANAN\n"
+               "=============================\n"
+               "1. Tampil Data Makanan\n"
+               "2. Ubah Data Makanan\n"
+               "3. Hapus Data Makanan\n"
+               "4. Kembali Ke MENU ADMIN\n"
+               "5. Kembali Ke MENU UTAMA\n"
+               "6. Keluar\n"
+               "=============================\n"
+               "Pilihan: "
+        );
+        pilihan = (char) getchar();
+
+        switch(pilihan) {
+            // 1.  tampil data makanan
+            case '1': {
+                printf("===========================\n"
+                       "MENU TAMPIL MAKANAN\n"
+                       "===========================\n\n"
+                );
+                tampil_makanan();
+                _getch();
+            }
+                break;
+
+                // 2. ubah data makanan
+            case '2': {
+                printf("===========================\n"
+                       "MENU UBAH MAKANAN\n"
+                       "===========================\n\n"
+                );
+
+                tampil_makanan();
+                MAMAK_ubah_makanan();
+                _getch();
+            }
+                break;
+
+            case '3':
+                printf("===========================\n"
+                       "MENU HAPUS MAKANAN\n"
+                       "===========================\n\n"
+                );
+
+                tampil_makanan();
+                MAMAK_hapus_makanan();
+                _getch();
+                break;
+
+            case '4':
+                menu_admin();
+                break;
+
+            case '5':
+                main();
+                break;
+
+            case '6':
+                exit(0);
+            default:
+                printf("Pilih hanya dari 1-6\n");
+
+        }
+
+    } while (pilihan < 1 || pilihan > 6);
+}
+
+/* ======================================= AKHIR FUNCTION MENU ADMIN DATA MINUMAN =============================================================*/
+
 void menu_admin() {
     char pilihan;
     do
