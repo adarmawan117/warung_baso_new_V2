@@ -456,7 +456,63 @@ void MAP_ubah_pelanggan() {
 
 //3. Hapus Data Pelanggan
 void MAP_hapus_pelanggan() {
+    int i = 0, file_handle_pelanggan, file_handle_temp, ukuran_file_pelanggan;
+    char hapus_nama[MAX] = "";
 
+    printf("===============================\n"
+           "MENU HAPUS DATA PELANGGAN\n"
+           "===============================\n\n"
+    );
+
+    buka_pelanggan();
+    buka_temp();
+
+    file_handle_pelanggan = fileno(f_pelanggan);
+    file_handle_temp      = fileno(f_temp);
+
+    if( ((ukuran_file_pelanggan = filelength(file_handle_pelanggan)) == -1L) || ((filelength(file_handle_temp)) == -1L) ){
+
+        printf("Tidak dapat memperoleh ukuran file :(\n");
+        Sleep(1000);
+        fclose(f_pelanggan);
+        fclose(f_temp);
+        exit(1);
+
+    } else {
+        if (ukuran_file_pelanggan == 0)
+            printf("Data Pelanggan Kosong!\n");
+        else {
+            printf("\n\n"
+                   "Masukkan nama yang ingin hapus: ");
+            scanf("%[^\n]%*c", &hapus_nama);
+
+            while(fread(&data_pelanggan, sizeof(data_pelanggan), 1, f_pelanggan)) {
+                if (strcmp(hapus_nama, data_pelanggan.nama) == 0) {
+                    char rubah;
+                    printf("Nama %s ditemukan\n", hapus_nama);
+                    printf("\n\n"
+                           "===================================\n"
+                           "DETAIL\n"
+                           "===================================\n"
+                           "Nama\t\t: %s\n"
+                           "Jumlah Belanja\t: %lli\n", data_pelanggan.nama, data_pelanggan.jumlah_belanja);
+                    printf("===================================\n\n");
+                    printf("Yakin Ingin Menghapus? [Y/T] ");
+                    rubah = (char) getchar();
+
+                    // jika Y, maka hapus, jika selain Y maka jangan hapus
+                    if (rubah != 'Y')
+                        fwrite(&data_pelanggan, sizeof(data_pelanggan), 1, f_temp);
+                }
+
+            } // end while
+
+            fclose(f_pelanggan);
+            fclose(f_temp);
+            remove("File_Data_Pelanggan.txt");
+            rename("temp.txt", "File_Data_Pelanggan.txt");
+        }
+    }
 }
 
 /*
@@ -498,9 +554,11 @@ void MA_pelanggan() {
                 break;
 
             case '4':
+                menu_admin();
                 break;
 
             case '5':
+                main();
                 break;
 
             case '6':
@@ -513,6 +571,15 @@ void MA_pelanggan() {
     } while (pilihan < 1 || pilihan > 6);
 }
 
+/* ======================================= AKHIR FUNCTION MENU ADMIN DATA PELANGGAN =============================================================*/
+
+/*
+ * Menu admin
+ * 2. Data Makanan
+ */
+void MA_makanan() {
+
+}
 void menu_admin() {
     char pilihan;
     do
@@ -539,6 +606,7 @@ void menu_admin() {
                 break;
 
             case '2':
+                MA_makanan();
                 break;
 
             case '3':
