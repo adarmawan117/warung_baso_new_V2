@@ -38,9 +38,22 @@ typedef struct {
     long long int jumlah_belanja;
 } Data_Pelanggan;
 
+typedef struct {
+    char id[MAX];
+    char tanggal[MAX];
+    char nama_pelanggan[MAX];
+    char jenis_orderan[MAX][20]; // makanan atau minuman
+    char nama_orderan[MAX][MAX]; // nama makanan atau minuman yang dipesan
+    long long int harga_orderan[MAX];
+    long long bayar_pelanggan[MAX];
+    char metode[MAX]; // metode yang dipakai untuk membayar (Tunai atau Non Tunai)
+    char status_bayar[MAX];
+} Data_Order;
+
 Data_Makanan data_makanan;
 Data_Minuman data_minuman;
 Data_Pelanggan data_pelanggan;
+Data_Order data_order;
 
 FILE *f_makanan, *f_minuman;
 
@@ -340,7 +353,7 @@ void menu_user() {
  */
 FILE *f_pelanggan, *f_temp;
 void buka_pelanggan() {
-    if((f_pelanggan = fopen("File_Data_Pelanggan.txt","a+")) == NULL){
+    if((f_pelanggan = fopen("File_Pelanggan.txt","a+")) == NULL){
         clrscr();
         printf("Data Pelanggan Tidak Bisa Dibuka Euy...\n");
         exit(1);
@@ -447,8 +460,8 @@ void MAP_ubah_pelanggan() {
 
             fclose(f_pelanggan);
             fclose(f_temp);
-            remove("File_Data_Pelanggan.txt");
-            rename("temp.txt", "File_Data_Pelanggan.txt");
+            remove("File_Pelanggan.txt");
+            rename("temp.txt", "File_Pelanggan.txt");
         }
     }
 }
@@ -508,8 +521,8 @@ void MAP_hapus_pelanggan() {
 
             fclose(f_pelanggan);
             fclose(f_temp);
-            remove("File_Data_Pelanggan.txt");
-            rename("temp.txt", "File_Data_Pelanggan.txt");
+            remove("File_Pelanggan.txt");
+            rename("temp.txt", "File_Pelanggan.txt");
         }
     }
 }
@@ -595,8 +608,8 @@ void MAMAK_ubah_makanan() {
            "MENAMPILKAN HASIL PENCARIAN\n"
            "=================================\n"
     );
-    while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman)) {
-        if (strcmp(cari_id, data_minuman.id) == 0) {
+    while(fread(&data_makanan, sizeof(data_makanan), 1, f_makanan)) {
+        if (strcmp(cari_id, data_makanan.id) == 0) {
 
             ++ketemu;
 
@@ -637,10 +650,10 @@ void MAMAK_ubah_makanan() {
         fwrite(&data_makanan, sizeof(data_makanan), 1, f_temp);
     }
 
-    fclose(f_pelanggan);
+    fclose(f_makanan);
     fclose(f_temp);
-    remove("File_Data_Pelanggan.txt");
-    rename("temp.txt", "File_Data_Pelanggan.txt");
+    remove("File_Makanan.txt");
+    rename("temp.txt", "File_Pelanggan.txt");
 }
 
 // Hapus Data Makanan
@@ -663,8 +676,8 @@ void MAMAK_hapus_makanan() {
            "MENAMPILKAN HASIL PENCARIAN\n"
            "=================================\n"
     );
-    while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman)) {
-        if (strcmp(cari_id, data_minuman.id) == 0) {
+    while(fread(&data_makanan, sizeof(data_makanan), 1, f_makanan)) {
+        if (strcmp(cari_id, data_makanan.id) == 0) {
 
             ++ketemu;
 
@@ -689,10 +702,10 @@ void MAMAK_hapus_makanan() {
         }
     }
 
-    fclose(f_pelanggan);
+    fclose(f_makanan);
     fclose(f_temp);
-    remove("File_Data_Pelanggan.txt");
-    rename("temp.txt", "File_Data_Pelanggan.txt");
+    remove("File_Makanan.txt");
+    rename("temp.txt", "File_Makanan.txt");
 }
 
 /*
@@ -776,6 +789,128 @@ void MA_makanan() {
 
 /* ======================================= AKHIR FUNCTION MENU ADMIN DATA MAKANAN =============================================================*/
 
+/*
+ * MENU ADMIN MAKANAN
+ * Ubah Data Makanan
+ */
+void MAMAK_ubah_minuman() {
+
+    int ketemu = 0;
+    char cari_id[MAX] = "";
+
+    tampil_minuman();
+
+    buka_minuman();
+    buka_temp();
+
+    printf("\n\n"
+           "Masukkan id minuman yang ingin dirubah: ");
+    scanf("%[^\n]%*c", &cari_id);
+
+    printf("\n\n"
+           "=================================\n"
+           "MENAMPILKAN HASIL PENCARIAN\n"
+           "=================================\n"
+    );
+    while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman)) {
+        if (strcmp(cari_id, data_minuman.id) == 0) {
+
+            ++ketemu;
+
+            printf("%i. "
+                   "\tKode Minuman\t: %s\n"
+                   "\tNama Minuman\t: %s\n"
+                   "\tHarga\t: %lli\n",
+
+                   ketemu,
+                   data_minuman.id,
+                   data_minuman.nama,
+                   data_minuman.harga
+            );
+
+            char rubah;
+            printf("===================================\n\n");
+            printf("Yakin ingin merubah? [Y/T] ");
+            rubah = (char) getchar();
+
+            if (rubah == 'Y') {
+
+                printf("\n"
+                       "==========================\n"
+                       "UPDATE DATA\n"
+                       "==========================\n"
+                       "ID : "
+                );
+                fflush(stdin);
+                gets(data_minuman.id);
+                printf("Nama Minuman: ");
+                fflush(stdin);
+                gets(data_minuman.nama);
+                printf("Harga: ");
+                scanf("%lli", &data_minuman.harga);
+
+            }
+        }
+        fwrite(&data_minuman, sizeof(data_minuman), 1, f_temp);
+    }
+
+    fclose(f_minuman);
+    fclose(f_temp);
+    remove("File_Minuman.txt");
+    rename("temp.txt", "File_Minuman.txt");
+}
+
+// Hapus Data Makanan
+void MAMAK_hapus_minuman() {
+
+    int ketemu = 0;
+    char cari_id[MAX] = "";
+
+    tampil_minuman();
+
+    buka_minuman();
+    buka_temp();
+
+    printf("\n\n"
+           "Masukkan id minuman yang ingin dihapus: ");
+    scanf("%[^\n]%*c", &cari_id);
+
+    printf("\n\n"
+           "=================================\n"
+           "MENAMPILKAN HASIL PENCARIAN\n"
+           "=================================\n"
+    );
+    while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman)) {
+        if (strcmp(cari_id, data_minuman.id) == 0) {
+
+            ++ketemu;
+
+            printf("%i. "
+                   "\tKode Minuman\t: %s\n"
+                   "\tNama Minuman\t: %s\n"
+                   "\tHarga\t: %lli\n",
+
+                   ketemu,
+                   data_minuman.id,
+                   data_minuman.nama,
+                   data_minuman.harga
+            );
+
+            char hapus;
+            printf("===================================\n\n");
+            printf("Yakin ingin menghapus? [Y/T] ");
+            hapus = (char) getchar();
+
+            if (hapus != 'Y')
+                fwrite(&data_minuman, sizeof(data_minuman), 1, f_temp);
+        }
+    }
+
+    fclose(f_minuman);
+    fclose(f_temp);
+    remove("File_Minuman.txt");
+    rename("temp.txt", "File_Minuman.txt");
+}
 
 /*
  * Menu admin
@@ -789,11 +924,11 @@ void MA_minuman() {
         fflush(stdin);
         clrscr();
         printf("=============================\n"
-               "MENU DATA MAKANAN\n"
+               "MENU DATA MINUMAN\n"
                "=============================\n"
-               "1. Tampil Data Makanan\n"
-               "2. Ubah Data Makanan\n"
-               "3. Hapus Data Makanan\n"
+               "1. Tampil Data Minuman\n"
+               "2. Ubah Data Minuman\n"
+               "3. Hapus Data Minuman\n"
                "4. Kembali Ke MENU ADMIN\n"
                "5. Kembali Ke MENU UTAMA\n"
                "6. Keluar\n"
@@ -803,49 +938,298 @@ void MA_minuman() {
         pilihan = (char) getchar();
 
         switch(pilihan) {
-            // 1.  tampil data makanan
+            // 1.  tampil data minuman
             case '1': {
                 printf("===========================\n"
-                       "MENU TAMPIL MAKANAN\n"
+                       "MENU TAMPIL MINUMAN\n"
                        "===========================\n\n"
                 );
-                tampil_makanan();
+                tampil_minuman();
                 _getch();
             }
                 break;
 
-                // 2. ubah data makanan
+                // 2. ubah data minuman
             case '2': {
                 printf("===========================\n"
-                       "MENU UBAH MAKANAN\n"
+                       "MENU UBAH MINUMAN\n"
                        "===========================\n\n"
                 );
 
-                tampil_makanan();
-                MAMAK_ubah_makanan();
+                tampil_minuman();
+                MAMAK_ubah_minuman();
                 _getch();
             }
                 break;
 
+            //3. hapus data minuman
             case '3':
                 printf("===========================\n"
-                       "MENU HAPUS MAKANAN\n"
+                       "MENU HAPUS MINUMAN\n"
                        "===========================\n\n"
                 );
 
-                tampil_makanan();
-                MAMAK_hapus_makanan();
+                tampil_minuman();
+                MAMAK_hapus_minuman();
                 _getch();
                 break;
 
+                // kembali ke menu admin
             case '4':
                 menu_admin();
                 break;
 
+                // kembali ke menu utama
             case '5':
                 main();
                 break;
 
+                // keluar dari program
+            case '6':
+                exit(0);
+            default:
+                printf("Pilih hanya dari 1-6\n");
+
+        }
+
+    } while (pilihan < 1 || pilihan > 6);
+}
+
+/* ======================================= AKHIR FUNCTION MENU ADMIN DATA MINUMAN =============================================================*/
+
+FILE *f_order;
+void buka_order() {
+    if((f_order = fopen("File_Order.txt", "a+")) == NULL) {
+        clrscr();
+        printf("Data Order Tidak Bisa Dibuka Euy...\n");
+        exit(1);
+    }
+}
+
+/*
+ * MENU ADMIN ORDERAN
+ */
+void MAO_tampil_order() {
+    int i = 0, file_handle, ukuran_file;
+
+    buka_order();
+    file_handle = fileno(f_order);
+    if((ukuran_file = filelength(file_handle)) == -1L){
+        printf("Tidak dapat memperoleh ukuran file :(\n");
+        Sleep(1000);
+        fclose(f_order);
+        exit(1);
+    } else {
+        if(ukuran_file == 0)
+            printf("Data Order Kosong!\n");
+        else {
+            printf("||==============||======================||==============================||\n");
+            printf("||\tNo\t||\tNama Pelanggan\t||\tTotal Belanja\t\t||\n");
+            printf("||==============||======================||==============================||\n");
+
+            while (fread(&data_pelanggan, sizeof(data_pelanggan), 1, f_pelanggan))
+                printf("||\t%i.\t||\t%s\t\t||\t%lli\t\t||\n", ++i, data_pelanggan.nama, data_pelanggan.jumlah_belanja);
+            printf("==========================================================================================\n");
+        }
+    }
+    fclose(f_pelanggan);
+    _getch();
+
+}
+
+//Ubah Data Orderan
+void MAO_ubah_order() {
+
+    int ketemu = 0;
+    char cari_id[MAX] = "";
+
+    tampil_minuman();
+
+    buka_minuman();
+    buka_temp();
+
+    printf("\n\n"
+           "Masukkan id minuman yang ingin dirubah: ");
+    scanf("%[^\n]%*c", &cari_id);
+
+    printf("\n\n"
+           "=================================\n"
+           "MENAMPILKAN HASIL PENCARIAN\n"
+           "=================================\n"
+    );
+    while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman)) {
+        if (strcmp(cari_id, data_minuman.id) == 0) {
+
+            ++ketemu;
+
+            printf("%i. "
+                   "\tKode Minuman\t: %s\n"
+                   "\tNama Minuman\t: %s\n"
+                   "\tHarga\t: %lli\n",
+
+                   ketemu,
+                   data_minuman.id,
+                   data_minuman.nama,
+                   data_minuman.harga
+            );
+
+            char rubah;
+            printf("===================================\n\n");
+            printf("Yakin ingin merubah? [Y/T] ");
+            rubah = (char) getchar();
+
+            if (rubah == 'Y') {
+
+                printf("\n"
+                       "==========================\n"
+                       "UPDATE DATA\n"
+                       "==========================\n"
+                       "ID : "
+                );
+                fflush(stdin);
+                gets(data_minuman.id);
+                printf("Nama Minuman: ");
+                fflush(stdin);
+                gets(data_minuman.nama);
+                printf("Harga: ");
+                scanf("%lli", &data_minuman.harga);
+
+            }
+        }
+        fwrite(&data_minuman, sizeof(data_minuman), 1, f_temp);
+    }
+
+    fclose(f_minuman);
+    fclose(f_temp);
+    remove("File_Minuman.txt");
+    rename("temp.txt", "File_Minuman.txt");
+}
+
+// Hapus Data Orderan
+void MAO_hapus_order() {
+
+    int ketemu = 0;
+    char cari_id[MAX] = "";
+
+    tampil_minuman();
+
+    buka_minuman();
+    buka_temp();
+
+    printf("\n\n"
+           "Masukkan id minuman yang ingin dihapus: ");
+    scanf("%[^\n]%*c", &cari_id);
+
+    printf("\n\n"
+           "=================================\n"
+           "MENAMPILKAN HASIL PENCARIAN\n"
+           "=================================\n"
+    );
+    while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman)) {
+        if (strcmp(cari_id, data_minuman.id) == 0) {
+
+            ++ketemu;
+
+            printf("%i. "
+                   "\tKode Minuman\t: %s\n"
+                   "\tNama Minuman\t: %s\n"
+                   "\tHarga\t: %lli\n",
+
+                   ketemu,
+                   data_minuman.id,
+                   data_minuman.nama,
+                   data_minuman.harga
+            );
+
+            char hapus;
+            printf("===================================\n\n");
+            printf("Yakin ingin menghapus? [Y/T] ");
+            hapus = (char) getchar();
+
+            if (hapus != 'Y')
+                fwrite(&data_minuman, sizeof(data_minuman), 1, f_temp);
+        }
+    }
+
+    fclose(f_minuman);
+    fclose(f_temp);
+    remove("File_Minuman.txt");
+    rename("temp.txt", "File_Minuman.txt");
+}
+
+/*
+ * Menu admin
+ * 4. Data Order
+ */
+void MA_order() {
+
+    char pilihan;
+
+    do {
+        fflush(stdin);
+        clrscr();
+        printf("=============================\n"
+               "MENU DATA ORDERAN\n"
+               "=============================\n"
+               "1. Tampil Data Order\n"
+               "2. Ubah Data Order\n"
+               "3. Hapus Data Order\n"
+               "4. Kembali Ke MENU ADMIN\n"
+               "5. Kembali Ke MENU UTAMA\n"
+               "6. Keluar\n"
+               "=============================\n"
+               "Pilihan: "
+        );
+        pilihan = (char) getchar();
+
+        switch(pilihan) {
+            // 1.  tampil data order
+            case '1': {
+                printf("===========================\n"
+                       "MENU TAMPIL ORDERAN\n"
+                       "===========================\n\n"
+                );
+                MAO_tampil_order();
+                _getch();
+            }
+                break;
+
+                // 2. ubah data order
+            case '2': {
+                printf("===========================\n"
+                       "MENU UBAH ORDERAN\n"
+                       "===========================\n\n"
+                );
+
+                MAO_tampil_order();
+                MAO_ubah_order();
+                _getch();
+            }
+                break;
+
+                //3. hapus data order
+            case '3':
+                printf("===========================\n"
+                       "MENU HAPUS ORDERAN\n"
+                       "===========================\n\n"
+                );
+
+                MAO_tampil_order();
+                MAO_hapus_order();
+                _getch();
+                break;
+
+                // kembali ke menu admin
+            case '4':
+                menu_admin();
+                break;
+
+                // kembali ke menu utama
+            case '5':
+                main();
+                break;
+
+                // keluar dari program
             case '6':
                 exit(0);
             default:
@@ -879,18 +1263,24 @@ void menu_admin() {
         pilihan = (char) getchar();
 
         switch(pilihan) {
+            // 1. menu admin data pelanggan
             case '1':
                 MA_pelanggan();
                 break;
 
+                // 2. menu admin data makanan
             case '2':
                 MA_makanan();
                 break;
 
+                // 3. menu admin data minuman
             case '3':
+                MA_minuman();
                 break;
 
+                // 4. menu admin data order
             case '4':
+                MA_order();
                 break;
 
             case '5':
