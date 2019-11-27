@@ -449,7 +449,7 @@ void MAP_ubah_pelanggan() {
             fclose(f_pelanggan);
             fclose(f_temp);
             remove("File_Data_Pelanggan.txt");
-            rename("temp.txt", "File_Data_Pelanggan.txt")
+            rename("temp.txt", "File_Data_Pelanggan.txt");
         }
     }
 }
