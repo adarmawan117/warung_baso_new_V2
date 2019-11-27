@@ -208,7 +208,7 @@ void tampil_minuman() {
 
         printf("\n\n"
                "||==============||======================||==============================||==============||\n");
-        printf("||\tNo\t||\tKode Minuman\t||\tNama Makanan\t\t||\tHarga\t||\n");
+        printf("||\tNo\t||\tKode Minuman\t||\tNama Minuman\t\t||\tHarga\t||\n");
         printf("||==============||======================||==============================||==============||\n");
 
         while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman))
@@ -339,11 +339,19 @@ void menu_user() {
  * Menu admin => Data Pelanggan
  *
  */
-FILE *f_pelanggan;
+FILE *f_pelanggan, *f_temp;
 void buka_pelanggan() {
     if((f_pelanggan = fopen("File_Data_Pelanggan.txt","a+")) == NULL){
         clrscr();
         printf("Data Pelanggan Tidak Bisa Dibuka Euy...\n");
+        exit(1);
+    }
+}
+
+void buka_temp() {
+    if((f_temp = fopen("temp.txt", "a+")) == NULL) {
+        clrscr();
+        printf("Data Temp Tidak Bisa Dibuka Euy...\n");
         exit(1);
     }
 }
@@ -383,7 +391,67 @@ void MAP_tampil_pelanggan() {
 
 //2. Ubah Data Pelanggan
 void MAP_ubah_pelanggan() {
+    int i = 0, file_handle_pelanggan, file_handle_temp, ukuran_file_pelanggan;
+    char cari_nama[MAX] = "";
 
+    printf("===============================\n"
+           "MENU UBAH DATA PELANGGAN\n"
+           "===============================\n\n"
+    );
+
+    buka_pelanggan();
+    buka_temp();
+
+    file_handle_pelanggan = fileno(f_pelanggan);
+    file_handle_temp      = fileno(f_temp);
+
+    if( ((ukuran_file_pelanggan = filelength(file_handle_pelanggan)) == -1L) || ((filelength(file_handle_temp)) == -1L) ){
+
+        printf("Tidak dapat memperoleh ukuran file :(\n");
+        Sleep(1000);
+        fclose(f_pelanggan);
+        fclose(f_temp);
+        exit(1);
+
+    } else {
+        if (ukuran_file_pelanggan == 0)
+            printf("Data Pelanggan Kosong!\n");
+        else {
+            printf("\n\n"
+                   "Masukkan nama yang ingin dirubah: ");
+            scanf("%[^\n]%*c", &cari_nama);
+
+            while(fread(&data_pelanggan, sizeof(data_pelanggan), 1, f_pelanggan)) {
+                if (strcmp(cari_nama, data_pelanggan.nama) == 0) {
+                    char rubah;
+                    printf("Nama %s ditemukan\n", cari_nama);
+                    printf("\n\n"
+                           "===================================\n"
+                           "DETAIL\n"
+                           "===================================\n"
+                           "Nama\t\t: %s\n"
+                           "Jumlah Belanja\t: %lli\n", data_pelanggan.nama, data_pelanggan.jumlah_belanja);
+                    printf("===================================\n\n");
+                    printf("Ingin merubah? [Y/T] ");
+                    rubah = (char) getchar();
+
+                    if (rubah == 'Y') {
+                        printf("Masukkan nama baru: ");
+                        fflush(stdin);
+                        scanf("%[^\n]%*c", &data_pelanggan.nama);
+                        printf("Masukkan jumlah belanja baru: ");
+                        scanf("%lli", &data_pelanggan.jumlah_belanja);
+                    }
+                }
+                fwrite(&data_pelanggan, sizeof(data_pelanggan), 1, f_temp);
+            } // end while
+
+            fclose(f_pelanggan);
+            fclose(f_temp);
+            remove("File_Data_Pelanggan.txt");
+            rename("temp.txt", "File_Data_Pelanggan.txt")
+        }
+    }
 }
 
 //3. Hapus Data Pelanggan
