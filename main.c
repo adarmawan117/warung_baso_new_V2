@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <windows.h>
 #include <io.h>
+#include <ctype.h>
 
 #define MAX 100
 
@@ -45,7 +46,7 @@ typedef struct {
     char jenis_orderan[MAX][20]; // makanan atau minuman
     char nama_orderan[MAX][MAX]; // nama makanan atau minuman yang dipesan
     long long int harga_orderan[MAX];
-    long long bayar_pelanggan[MAX];
+    long long bayar_pelanggan;
     char metode[MAX]; // metode yang dipakai untuk membayar (Tunai atau Non Tunai)
     char status_bayar[MAX];
 } Data_Order;
@@ -65,14 +66,6 @@ void buka_makanan() {
     }
 }
 
-void baca_makanan() {
-    if((f_makanan = fopen("File_Makanan.txt","r+")) == NULL){
-        clrscr();
-        printf("Data Makanan Tidak Ada Euy....\n");
-        exit(1);
-    }
-}
-
 void buka_minuman() {
     if((f_minuman = fopen("File_Minuman.txt","a+")) == NULL){
         clrscr();
@@ -81,44 +74,31 @@ void buka_minuman() {
     }
 }
 
-void baca_minuman() {
-    if((f_minuman = fopen("File_Minuman.txt","r+")) == NULL){
-        clrscr();
-        printf("Data Makanan Tidak Ada Euy....\n");
-        exit(1);
-    }
-}
-
 void input_makanan_manual(){
     buka_makanan();
-    strcpy(data_makanan.id,   "MN-0001");
-    strcpy(data_makanan.nama, "Es Campur");
-    data_makanan.harga        = 7000;
+    strcpy(data_makanan.id,   "MK-0001");
+    strcpy(data_makanan.nama, "Bakso Kuah Biasa");
+    data_makanan.harga        = 14000;
     fwrite(&data_makanan, sizeof(data_makanan), 1, f_makanan);
 
-    strcpy(data_makanan.id,    "MN-0002");
-    strcpy(data_makanan.nama,  "Es Teh Manis");
-    data_makanan.harga         = 3500;
+    strcpy(data_makanan.id,    "MK-0002");
+    strcpy(data_makanan.nama,  "Bakso Kuah Spesial");
+    data_makanan.harga         = 20000;
     fwrite(&data_makanan, sizeof(data_makanan), 1, f_makanan);
 
-    strcpy(data_makanan.id,    "MN-0003");
-    strcpy(data_makanan.nama,  "Es Jeruk");
-    data_makanan.harga         = 4000;
+    strcpy(data_makanan.id,    "MK-0003");
+    strcpy(data_makanan.nama,  "Bakso Yamin Biasa");
+    data_makanan.harga         = 15000;
     fwrite(&data_makanan, sizeof(data_makanan), 1, f_makanan);
 
-    strcpy(data_makanan.id,    "MN-0004");
-    strcpy(data_makanan.nama,  "Es Teh botol");
-    data_makanan.harga         = 4000;
+    strcpy(data_makanan.id,    "MK-0004");
+    strcpy(data_makanan.nama,  "Bakso Yamin Spesial");
+    data_makanan.harga         = 21000;
     fwrite(&data_makanan, sizeof(data_makanan), 1, f_makanan);
 
-    strcpy(data_makanan.id,    "MN-0005");
-    strcpy(data_makanan.nama,  "Es Teh Gelas");
-    data_makanan.harga         = 1500;
-    fwrite(&data_makanan, sizeof(data_makanan), 1, f_makanan);
-
-    strcpy(data_makanan.id,    "MN-0006");
-    strcpy(data_makanan.nama,  "Es Fruit Tea");
-    data_makanan.harga         = 4000;
+    strcpy(data_makanan.id,    "MK-0005");
+    strcpy(data_makanan.nama,  "Bakso Kuah Beranak");
+    data_makanan.harga         = 27000;
     fwrite(&data_makanan, sizeof(data_makanan), 1, f_makanan);
 
     fclose(f_makanan);
@@ -173,35 +153,20 @@ void tampil_makanan() {
         fclose(f_makanan);
         exit(1);
     } else {
-        if(ukuran_file == 0)
+        if(ukuran_file == 0) {
             input_makanan_manual();
+            buka_makanan();
+        }
 
         printf("||==============||======================||==============================||==============||\n");
         printf("||\tNo\t||\tKode Makanan\t||\tNama Makanan\t\t||\tHarga\t||\n");
         printf("||==============||======================||==============================||==============||\n");
 
         while(fread(&data_makanan, sizeof(data_makanan), 1, f_makanan))
-            printf("||\t%i.\t||\t%s\t\t||\t%s\t\t||\t%lli\t||\n",++i, data_makanan.id, data_makanan.nama, data_makanan.harga);
+            printf("||\t%i.\t||\t%s\t\t||\t%s\t||\t%lli\t||\n",++i, data_makanan.id, data_makanan.nama, data_makanan.harga);
         printf("==========================================================================================\n");
     }
     fclose(f_makanan);
-
-    /*
-    if(strcmp(data_makanan[0].id, "") == 0)
-        input_makanan_manual();
-
-    printf("===================================\n"
-           "DATA MAKANAN\n"
-           "===================================\n");
-    while(strcmp(data_makanan[i].id, "") != 0){
-        printf("Data Makanan %d:\n", i+1);
-        printf("ID\t: %s\n",        data_makanan[i].id);
-        printf("Nama\t: %s\n",      data_makanan[i].nama);
-        printf("Harga\t: %d\n\n\n", data_makanan[i].harga);
-
-        i++;
-    }
-     */
 }
 
 void tampil_minuman() {
@@ -216,8 +181,10 @@ void tampil_minuman() {
         fclose(f_minuman);
         exit(1);
     } else {
-        if(ukuran_file == 0)
+        if(ukuran_file == 0) {
             input_minuman_manual();
+            buka_minuman();
+        }
 
         printf("\n\n"
                "||==============||======================||==============================||==============||\n");
@@ -229,26 +196,6 @@ void tampil_minuman() {
         printf("==========================================================================================\n");
     }
     fclose(f_minuman);
-
-
-    /*
-    int i = 0;
-
-    if(strcmp(data_minuman[0].id, "") == 0)
-        input_minuman_manual();
-
-    printf("===================================\n"
-           "DATA MINUMAN\n"
-           "===================================\n");
-    while(strcmp(data_minuman[i].id, "") != 0){
-        printf("Data Minuman %d:\n", i+1);
-        printf("ID\t: %s\n",        data_minuman[i].id);
-        printf("Nama\t: %s\n",      data_minuman[i].nama);
-        printf("Harga\t: %d\n\n\n", data_minuman[i].harga);
-
-        i++;
-    }
-     */
 }
 
 // menu 1
@@ -340,13 +287,6 @@ void menu_user() {
     ke_menu_utama:
     printf("");
 }
-
-/*
-"2. Data Pemesanan\n"
-"3. Tampil Data Pelanggan\n"
-"4. Cari Data\n"
-"5. Edit Data\n"
- */
 
 /*
  * Menu admin => Data Pelanggan
@@ -758,7 +698,7 @@ void MA_makanan() {
             }
                 break;
 
-            case '3':
+            case '3': {
                 printf("===========================\n"
                        "MENU HAPUS MAKANAN\n"
                        "===========================\n\n"
@@ -767,6 +707,7 @@ void MA_makanan() {
                 tampil_makanan();
                 MAMAK_hapus_makanan();
                 _getch();
+            }
                 break;
 
             case '4':
@@ -880,7 +821,7 @@ void MAMAK_hapus_minuman() {
            "MENAMPILKAN HASIL PENCARIAN\n"
            "=================================\n"
     );
-    while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman)) {
+    while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman))
         if (strcmp(cari_id, data_minuman.id) == 0) {
 
             ++ketemu;
@@ -904,7 +845,6 @@ void MAMAK_hapus_minuman() {
             if (hapus != 'Y')
                 fwrite(&data_minuman, sizeof(data_minuman), 1, f_temp);
         }
-    }
 
     fclose(f_minuman);
     fclose(f_temp);
@@ -963,7 +903,7 @@ void MA_minuman() {
                 break;
 
             //3. hapus data minuman
-            case '3':
+            case '3': {
                 printf("===========================\n"
                        "MENU HAPUS MINUMAN\n"
                        "===========================\n\n"
@@ -972,6 +912,7 @@ void MA_minuman() {
                 tampil_minuman();
                 MAMAK_hapus_minuman();
                 _getch();
+            }
                 break;
 
                 // kembali ke menu admin
@@ -1006,13 +947,57 @@ void buka_order() {
     }
 }
 
+void tambah_order_manual() {
+
+    buka_order();
+
+    strcpy(data_order.id, "AD-JAN-MK");
+    strcpy(data_order.tanggal, "12-JANUARI-2019");
+    strcpy(data_order.nama_pelanggan, "Agus Darmawan");
+
+    strcpy(data_order.jenis_orderan[0], "Minuman");
+    strcpy(data_order.nama_orderan[0], "Es-Campur");
+    data_order.harga_orderan[0] = 12000;
+
+    strcpy(data_order.jenis_orderan[1], "Makanan");
+    strcpy(data_order.nama_orderan[1], "Nasi Goreng");
+    data_order.harga_orderan[1] = 10000;
+
+    strcpy(data_order.jenis_orderan[2], "Minuman");
+    strcpy(data_order.nama_orderan[2], "Es-Doger");
+    data_order.harga_orderan[2] = 9000;
+
+    strcpy(data_order.jenis_orderan[3], "Makanan");
+    strcpy(data_order.nama_orderan[3], "Sate Ayam");
+    data_order.harga_orderan[3] = 20000;
+
+    strcpy(data_order.jenis_orderan[4], "Makanan");
+    strcpy(data_order.nama_orderan[4], "Pepes Ikan");
+    data_order.harga_orderan[4] = 16000;
+
+    data_order.bayar_pelanggan = 100000;
+    strcpy(data_order.metode, "Tunai");
+    strcpy(data_order.status_bayar, "Lunas");
+
+    fwrite(&data_order, sizeof(data_order), 1, f_order);
+    fclose(f_order);
+}
 /*
  * MENU ADMIN ORDERAN
  */
 void MAO_tampil_order() {
-    int i = 0, file_handle, ukuran_file;
+    int ketemu = 0, file_handle, ukuran_file;
 
     buka_order();
+
+    printf("||==============||==============================||==============================||==============================||==============================||\n");
+    printf("||\tNo\t"
+           "||\tID\t\t\t"
+           "||\t\tTanggal\t\t"
+           "||\tNama Pelanggan\t\t"
+           "||\tTotal Belanja\t\t||\n");
+    printf("||==============||==============================||==============================||==============================||==============================||\n");
+
     file_handle = fileno(f_order);
     if((ukuran_file = filelength(file_handle)) == -1L){
         printf("Tidak dapat memperoleh ukuran file :(\n");
@@ -1020,20 +1005,200 @@ void MAO_tampil_order() {
         fclose(f_order);
         exit(1);
     } else {
-        if(ukuran_file == 0)
-            printf("Data Order Kosong!\n");
-        else {
-            printf("||==============||======================||==============================||\n");
-            printf("||\tNo\t||\tNama Pelanggan\t||\tTotal Belanja\t\t||\n");
-            printf("||==============||======================||==============================||\n");
-
-            while (fread(&data_pelanggan, sizeof(data_pelanggan), 1, f_pelanggan))
-                printf("||\t%i.\t||\t%s\t\t||\t%lli\t\t||\n", ++i, data_pelanggan.nama, data_pelanggan.jumlah_belanja);
-            printf("==========================================================================================\n");
+        if(ukuran_file == 0) {
+            tambah_order_manual();
+            buka_order();
         }
+
+        while (fread(&data_order, sizeof(data_order), 1, f_order)) {
+            long long int total_bayar = 0;
+            int i = 0;
+
+            ++ketemu;
+
+            while(data_order.harga_orderan[i] != '\0') {
+                total_bayar += data_order.harga_orderan[i];
+                i++;
+            }
+
+            printf("||\t%i\t"
+                   "||\t%s\t\t"
+                   "||\t%s\t\t"
+                   "||\t%s\t\t"
+                   "||\t%lli\t\t\t||\n",
+
+                   ketemu,
+                   data_order.id,
+                   data_order.tanggal,
+                   data_order.nama_pelanggan,
+                   total_bayar
+            );
+        }
+        printf("||==============||==============================||==============================||==============================||==============================||\n");
+
     }
-    fclose(f_pelanggan);
-    _getch();
+    fclose(f_order);
+}
+
+void input_order() {
+
+    memset(&data_order, 0, sizeof(data_order));
+
+    printf("ID Order: ");
+    fflush(stdin); gets(data_order.id);
+
+    printf("Tanggal: ");
+    fflush(stdin); gets(data_order.tanggal);
+
+    printf("Nama Pelanggan: ");
+    fflush(stdin); gets(data_order.nama_pelanggan);
+
+    printf("\n");
+
+
+    char pilih_jenis = '4'; // menampilkan makanan dan atau minuman
+    char pilih_lagi; // untuk memilih menu lagi
+    int i = 0; // untuk indexing pesanan (banyak pesanan)
+
+    do {
+        fflush(stdin);
+        printf("1. Makanan\n"
+               "2. Minuman\n"
+        );
+        pilih_jenis = (char) getchar();
+
+        switch (pilih_jenis) {
+
+            // jika yang dipilih adalah makanan
+            case '1': {
+                int pilih_menu;
+
+                // tampilkan data makanan
+                tampil_makanan();
+                printf("\n"
+                       "Pilih Menu No: ");
+                scanf("%i", &pilih_menu);
+                fflush(stdin);
+
+                // buka file makanan, agar bisa diakses isinya
+                buka_makanan();
+
+                // isikan jenis orderan dengan makanan
+                strcpy(data_order.jenis_orderan[i], "Makanan");
+
+                int j = 0;
+                while (fread(&data_makanan, sizeof(data_makanan), 1, f_makanan)) {
+                    j++;
+
+                    /*
+                     * jika yang dipilih sama dengan menu:
+                     * - maka masukkan nama makanan kedalam nama orderan
+                     * - masukkan harga makanan kedalam harga orderan
+                     */
+                    if(pilih_menu == j){
+                        strcpy(data_order.nama_orderan[i], data_makanan.nama);
+                        data_order.harga_orderan[i] = data_makanan.harga;
+                        // jika data makanan ditemukan, maka tambahkan index di data orderan makanan menjadi 2
+                        i++;
+                        break;
+                    } // end if pilih_menu == j
+                } // end while fread(data_makanan)
+                fclose(f_makanan);
+
+            } // end case '1'
+                break;
+
+                // jika yang dipilih adalah minuman
+            case '2': {
+                int pilih_menu;
+
+                // tampilkan data minuman
+                tampil_minuman();
+                printf("\n"
+                       "Pilih Menu No: ");
+                scanf("%i", &pilih_menu);
+                fflush(stdin);
+
+                // buka file minuman, agar bisa diakses isinya
+                buka_minuman();
+
+                // isikan jenis orderan dengan minuman
+                strcpy(data_order.jenis_orderan[i], "Minuman");
+
+                int j = 0;
+                while (fread(&data_minuman, sizeof(data_minuman), 1, f_minuman)) {
+                    j++;
+
+                    /*
+                     * jika yang dipilih sama dengan menu:
+                     * - maka masukkan nama minuman kedalam nama orderan
+                     * - masukkan harga minuman kedalam harga orderan
+                     */
+                    if(pilih_menu == j){
+                        strcpy(data_order.nama_orderan[i], data_minuman.nama);
+                        data_order.harga_orderan[i] = data_minuman.harga;
+                        // jika data minuman ditemukan, maka tambahkan index di data orderan minuman menjadi 2
+                        i++;
+                        break;
+                    } // end if pilih_menu == j
+                } // end while fread(data_minuman)
+                fclose(f_minuman);
+            }
+                break;
+
+            default: {
+                printf("Pilih hanya makanan dan minuman saja!\n");
+            }
+        } // switch pilih_jenis (makanan atau minuman)
+
+        printf("Ingin memilih lagi? [Y/T]");
+        pilih_lagi = (char) getchar();
+        pilih_lagi = (char) toupper(pilih_lagi);
+
+        printf("\n");
+    } while(pilih_jenis < '1' || pilih_jenis > '2' || pilih_lagi == 'Y');
+
+    /*
+     long long bayar_pelanggan;
+    char metode[MAX]; // metode yang dipakai untuk membayar (Tunai atau Non Tunai)
+    char status_bayar[MAX];
+     */
+    printf("Pelanggan bayar: ");
+    scanf("%lli", &data_order.bayar_pelanggan);
+
+    // jenis pembayaran (Tunai atau Non-Tunai)
+    fflush(stdin);
+    char bayar;
+    do {
+        printf("Metode Pembayaran\n"
+               "1. Tunai\n"
+               "2. Non-Tunai\n"
+               "pilihan: ");
+        bayar = (char) getchar();
+        if(bayar == '1')
+            strcpy(data_order.metode, "Tunai");
+        else if(bayar == '2')
+            strcpy(data_order.metode, "Non-Tunai");
+        else
+            printf("Pilih hanya Tunai atau Non-tunai!\n");
+    } while(bayar < '1' || bayar > '2');
+
+    // status pembyaran (Lunas atau Tidak Lunas)
+    fflush(stdin);
+    char status;
+    do {
+        printf("Status Pembayaran\n"
+               "1. Lunas\n"
+               "2. Tidak Lunas\n"
+               "pilihan: ");
+        status = (char) getchar();
+        if(status == '1')
+            strcpy(data_order.status_bayar, "Lunas");
+        else if(status == '2')
+            strcpy(data_order.status_bayar, "Tidak Lunas");
+        else
+            printf("Pilih hanya Lunas atau Tidak Lunas!\n");
+    } while(status < '1' || status > '2');
 
 }
 
@@ -1043,13 +1208,12 @@ void MAO_ubah_order() {
     int ketemu = 0;
     char cari_id[MAX] = "";
 
-    tampil_minuman();
-
-    buka_minuman();
+    buka_order();
     buka_temp();
 
     printf("\n\n"
-           "Masukkan id minuman yang ingin dirubah: ");
+           "Masukkan id orderan yang ingin dirubah: ");
+    fflush(stdin);
     scanf("%[^\n]%*c", &cari_id);
 
     printf("\n\n"
@@ -1057,26 +1221,54 @@ void MAO_ubah_order() {
            "MENAMPILKAN HASIL PENCARIAN\n"
            "=================================\n"
     );
-    while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman)) {
-        if (strcmp(cari_id, data_minuman.id) == 0) {
+    while(fread(&data_order, sizeof(data_order), 1, f_order)) {
+        if (strcmp(cari_id, data_order.id) == 0) {
 
             ++ketemu;
 
             printf("%i. "
-                   "\tKode Minuman\t: %s\n"
-                   "\tNama Minuman\t: %s\n"
-                   "\tHarga\t: %lli\n",
+                   "\tID Order\t: %s\n"
+                   "\tTanggal\t\t: %s\n"
+                   "\tNama Pelanggan\t: %s\n",
 
                    ketemu,
-                   data_minuman.id,
-                   data_minuman.nama,
-                   data_minuman.harga
+                   data_order.id,
+                   data_order.tanggal,
+                   data_order.nama_pelanggan
+            );
+
+            printf("\n");
+
+            // menampilkan makanan dan atau minuman
+            int i = 0;
+            while((strcmp(data_order.jenis_orderan[i],"")) != 0) {
+                printf("\t%i."
+                       "\t\t%s \t=> %s \t=> %lld\n"
+                        , i,
+                       data_order.jenis_orderan[i],
+                       data_order.nama_orderan[i],
+                       data_order.harga_orderan[i]
+                );
+                i++;
+            }
+
+            printf("\n");
+
+            // menampilkan data setelah data makanan dan minuman
+            printf("\tBayar Pelanggan\t: %lld\n"
+                   "\tMetode\t\t: %s\n"
+                   "\tStatus Bayar\t: %s\n",
+
+                   data_order.bayar_pelanggan,
+                   data_order.metode,
+                   data_order.status_bayar
             );
 
             char rubah;
             printf("===================================\n\n");
             printf("Yakin ingin merubah? [Y/T] ");
             rubah = (char) getchar();
+            rubah = (char) toupper(rubah);
 
             if (rubah == 'Y') {
 
@@ -1084,25 +1276,19 @@ void MAO_ubah_order() {
                        "==========================\n"
                        "UPDATE DATA\n"
                        "==========================\n"
-                       "ID : "
                 );
-                fflush(stdin);
-                gets(data_minuman.id);
-                printf("Nama Minuman: ");
-                fflush(stdin);
-                gets(data_minuman.nama);
-                printf("Harga: ");
-                scanf("%lli", &data_minuman.harga);
-
+                input_order();
             }
+
         }
-        fwrite(&data_minuman, sizeof(data_minuman), 1, f_temp);
+
+        fwrite(&data_order, sizeof(data_order), 1, f_temp);
     }
 
-    fclose(f_minuman);
+    fclose(f_order);
     fclose(f_temp);
-    remove("File_Minuman.txt");
-    rename("temp.txt", "File_Minuman.txt");
+    remove("File_Order.txt");
+    rename("temp.txt", "File_Order.txt");
 }
 
 // Hapus Data Orderan
@@ -1111,13 +1297,12 @@ void MAO_hapus_order() {
     int ketemu = 0;
     char cari_id[MAX] = "";
 
-    tampil_minuman();
-
-    buka_minuman();
+    buka_order();
     buka_temp();
 
     printf("\n\n"
-           "Masukkan id minuman yang ingin dihapus: ");
+           "Masukkan id orderan yang ingin dihapus: ");
+    fflush(stdin);
     scanf("%[^\n]%*c", &cari_id);
 
     printf("\n\n"
@@ -1125,36 +1310,65 @@ void MAO_hapus_order() {
            "MENAMPILKAN HASIL PENCARIAN\n"
            "=================================\n"
     );
-    while(fread(&data_minuman, sizeof(data_minuman), 1, f_minuman)) {
-        if (strcmp(cari_id, data_minuman.id) == 0) {
+    while(fread(&data_order, sizeof(data_order), 1, f_order)) {
+        if (strcmp(cari_id, data_order.id) == 0) {
 
             ++ketemu;
 
             printf("%i. "
-                   "\tKode Minuman\t: %s\n"
-                   "\tNama Minuman\t: %s\n"
-                   "\tHarga\t: %lli\n",
+                   "\tID Order\t: %s\n"
+                   "\tTanggal\t\t: %s\n"
+                   "\tNama Pelanggan\t: %s\n",
 
                    ketemu,
-                   data_minuman.id,
-                   data_minuman.nama,
-                   data_minuman.harga
+                   data_order.id,
+                   data_order.tanggal,
+                   data_order.nama_pelanggan
             );
 
-            char hapus;
+            printf("\n");
+
+            // menampilkan makanan dan atau minuman
+            int i = 0;
+            while((strcmp(data_order.jenis_orderan[i],"")) != 0) {
+                printf("\t%i."
+                       "\t\t%s \t=> %s \t=> %lld\n"
+                        , i,
+                       data_order.jenis_orderan[i],
+                       data_order.nama_orderan[i],
+                       data_order.harga_orderan[i]
+                );
+                i++;
+            }
+
+            printf("\n");
+
+            // menampilkan data setelah data makanan dan minuman
+            printf("\tBayar Pelanggan\t: %lld\n"
+                   "\tMetode\t\t: %s\n"
+                   "\tStatus Bayar\t: %s\n",
+
+                   data_order.bayar_pelanggan,
+                   data_order.metode,
+                   data_order.status_bayar
+            );
+
+            char rubah;
             printf("===================================\n\n");
             printf("Yakin ingin menghapus? [Y/T] ");
-            hapus = (char) getchar();
+            rubah = (char) getchar();
+            rubah = (char) toupper(rubah);
 
-            if (hapus != 'Y')
-                fwrite(&data_minuman, sizeof(data_minuman), 1, f_temp);
+            if (rubah != 'Y')
+                fwrite(&data_order, sizeof(data_order), 1, f_temp);
+
         }
     }
 
-    fclose(f_minuman);
+    fclose(f_order);
     fclose(f_temp);
-    remove("File_Minuman.txt");
-    rename("temp.txt", "File_Minuman.txt");
+    remove("File_Order.txt");
+    rename("temp.txt", "File_Order.txt");
 }
 
 /*
@@ -1208,7 +1422,7 @@ void MA_order() {
                 break;
 
                 //3. hapus data order
-            case '3':
+            case '3': {
                 printf("===========================\n"
                        "MENU HAPUS ORDERAN\n"
                        "===========================\n\n"
@@ -1217,6 +1431,7 @@ void MA_order() {
                 MAO_tampil_order();
                 MAO_hapus_order();
                 _getch();
+            }
                 break;
 
                 // kembali ke menu admin
@@ -1244,8 +1459,7 @@ void MA_order() {
 
 void menu_admin() {
     char pilihan;
-    do
-    {
+    do {
         fflush(stdin);
         clrscr();
         printf("===========================\n"
@@ -1305,8 +1519,7 @@ int main() {
 
     char pilihan;
 
-    do
-    {
+    do {
         fflush(stdin);
         clrscr();
         printf("============\n"
