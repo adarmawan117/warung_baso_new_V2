@@ -198,6 +198,7 @@ void tampil_minuman() {
     fclose(f_minuman);
 }
 
+/* ================================================ AWAL METHOD MENU USER ===================================================*/
 // menu 1
 void tampil_menu() {
 
@@ -287,6 +288,7 @@ void menu_user() {
     ke_menu_utama:
     printf("");
 }
+/* ================================================ AKHIR METHOD MENU USER ===================================================*/
 
 /*
  * Menu admin => Data Pelanggan
